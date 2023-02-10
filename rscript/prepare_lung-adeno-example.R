@@ -15,7 +15,9 @@ sce.rdata <- "sincell_with_class.RData"
 destpath <- paste0("./",dest.dir,"/", sce.rdata)
 
 # script paths
-download.script.fpath <- "./rscript/download_lung-adeno-sce.R"
+scripts.dir <- "rscript"
+download.script.fpath <- file.path(scripts.dir, "download_lung-adeno-sce.R")
+utilities.script.fpath <- file.path(scripts.dir, "r-nf_utilities.R")
 
 # variables
 true.label.variable <- "cell_line_demuxlet"
@@ -24,6 +26,11 @@ true.label.variable <- "cell_line_demuxlet"
 sce.names <- c("sce_sc_10x_qc", "sce_sc_CELseq2_qc", "sce_sc_Dropseq_qc")
 true.prop.fname.stem <- "true_proportions_"
 workflow.table.fname <- "workflow_table.csv"
+
+#-----------------
+# source utilities
+#-----------------
+source(utilities.script.fpath)
 
 #--------------------
 # parse data download
@@ -45,56 +52,18 @@ ls()
 #----------------------
 # save new example data
 #----------------------
-# save sce objects
-for(scei in sce.names){
-  sce <- eval(parse(text = scei))
-  new.fname <- paste0(scei, ".rda")
-  new.fpath <- file.path(dest.dir, new.fname)
-  save(sce, file = new.fpath)
-}
+data.save.status <- try(save_sce_data(sce.names, 
+                                      celltypevariable = "celltype",
+                                      data.dir = "data", overwrite = TRUE))
 
-# save true proportions
-for(scei in sce.names){
-  sce <- eval(parse(text = scei))
-  true.labels <- sce[[true.label.variable]]
-  freq.labels <- table(true.labels)
-  prop.labels <- freq.labels/sum(freq.labels)
-  true.proportions <- as.numeric(prop.labels)
-  names(true.proportions) <- names(freq.labels)
-  # save
-  new.fname <- paste0(true.prop.fname.stem, scei, ".rda")
-  new.fpath <- file.path(dest.dir, new.fname)
-  save(true.proportions, file = new.fpath)
+if(is(data.save.status, "logical") & data.save.status==TRUE){
+  message("Data save success.")
+} else{
+  message("Data save failure. Result: ", data.save.status)
 }
 
 #-----------------------------
 # begin new workflow_table.csv
 #-----------------------------
-# start new table
-dfnew <- matrix(nrow = 0, ncol = 6)
-
-# get template row
-newline <- c(file.path("$lunchDir", dest.dir),  # sce path
-             file.path("$launchDir", dest.dir), # true proportions path
-             "nnls",                            # deconvolution method
-             "NA",                              # additional arguments
-             "lung_adeno_first_benchmark",      # run label
-             "counts")                          # assay name
-
-# update object paths
-for(scei in sce.names){
-  linei <- newline
-  linei[1] <- file.path(linei[1], 
-                        paste0(scei, ".rda"))
-  linei[2] <- file.path(linei[2], 
-                        paste0(true.prop.fname.stem, 
-                               scei, ".rda"))
-  linei[1] <- paste0('"', linei[1], '"')
-  linei[2] <- paste0('"', linei[2], '"')
-  dfnew <- rbind(dfnew, linei)
-}
-colnames(dfnew) <- c("sce_filepath", "true_proportions_path", 
-                     "decon_method", "decon_args", "run_info", "assay_name")
-
-# save
-write.csv(dfnew, file = workflow.table.fname, row.names = FALSE)
+new_workflow_table(sce.names, data.dir = dest.dir, 
+                   true.prop.fname.stem = true.prop.fname.stem)
