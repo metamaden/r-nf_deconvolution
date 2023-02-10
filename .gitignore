@@ -1,3 +1,13 @@
+#--------------------
+# nextflow .gitignore
+#--------------------
+*nextflow.log*
+*.nextflow
+work
+
+#-------------
+# R .gitignore
+#-------------
 # History files
 .Rhistory
 .Rapp.history

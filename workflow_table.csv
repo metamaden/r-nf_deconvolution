@@ -1,0 +1,5 @@
+sce_filepath,true_proportions_path,decon_method,decon_args,run_info,assay_name
+"""$launchDir/data/sce-example.rda""","""$launchDir/data/true-proportions.rda""",nnls,NA,first_benchmark,counts
+"""$launchDir/data/sce-example.rda""","""$launchDir/data/true-proportions.rda""",NNLS,NA,first_benchmark,logcounts
+"""$launchDir/data/sce-example.rda""","""$launchDir/data/true-proportions.rda""",music,NA,first_benchmark,counts
+"""$launchDir/data/sce-example.rda""","""$launchDir/data/true-proportions.rda""",MuSiC,NA,first_benchmark,logcounts

@@ -1,0 +1,6 @@
+﻿variable,type,description,append_string
+sce_filepath,param,Filepath to SCE object to read,NA
+decon_method,param,Deconvolution method to use,NA
+decon_args,param,Additional deconvolution method arguments,NA
+assay_name,param,Name of assay in SCE object to use,NA
+true_proportions_path,param,RDA object containing a vector of true cell type proportions,NA
