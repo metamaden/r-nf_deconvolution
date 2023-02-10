@@ -10,8 +10,8 @@
 # manage params
 #--------------
 cname.type.labels <- "type.labels"
-filt.str.pred.prop <- "^prop\\.pred\\..*"
-filt.str.true.prop <- "^prop\\.true\\..*"
+filt.str.pred <- "^prop\\.pred\\."
+filt.str.true <- "^prop\\.true\\."
 
 # filenames
 fname.str <- 'deconvolution_analysis_.*'
@@ -39,20 +39,20 @@ dfres <- do.call(rbind, lapply(lfv.filt, function(fni){
 res.colnames <- colnames(dfres)
 if(cname.type.labels %in% colnames(dfres)){
   message("Getting RMSE within types...")
-  unique.types <- unique(dfres[,cname.type.labels])
+  cnvf <- colnames(dfres)
+  cnvf <- cnvf[grepl(filt.str.pred, cnvf)]
+  unique.types <- unique(gsub(".*\\.", "", cnvf))
   df.rmse <- do.call(cbind, lapply(unique.types, function(typei){
-    cname.pred.str <- paste0(filt.str.pred.prop, typei)
-    cname.true.str <- paste0(filt.str.true.prop, typei)
-    
+    cname.pred.str <- paste0(filt.str.pred, typei)
+    cname.true.str <- paste0(filt.str.true, typei)
     pred.prop <- dfres[,grepl(cname.pred.str, res.colnames)][1]
     true.prop <- dfres[,grepl(cname.true.str, res.colnames)][1]
-    
     pred.prop <- as.numeric(pred.prop)
     true.prop <- as.numeric(true.prop)
-    
     rmsei <- sqrt(mean((pred.prop-true.prop)^2))
     rep(rmsei, nrow(dfres))
   }))
+  colnames(df.rmse) <- paste0("rmse.", unique.types)
   dfres <- cbind(dfres, df.rmse)
 } else{
   message("Didn't find any columns called 'type.labels'. ",
