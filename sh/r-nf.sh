@@ -8,8 +8,8 @@
 
 # params
 rscript_dir=rscript
-write_param_script=write_params.R
-gather_script=gather_results.R
+write_param_script=r-nf_write-params.R
+gather_script=r-nf_gather-results.R
 
 # update param.config
 echo "updating params.config..."

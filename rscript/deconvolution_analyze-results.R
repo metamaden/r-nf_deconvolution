@@ -65,12 +65,12 @@ rmse.name <- "rmse_types"
 # return results
 #---------------
 # get results matrix
-# get analyses as matrix
-analysis.matrix <- matrix(c(rmse.types, bias.vector), nrow = 1)
-colnames(analysis.matrix) <- c(rmse.name, bias.names)
+mres <- matrix(c(true.prop, rmse.types, bias.vector), nrow = 1)
+colnames(mres) <- c(paste0("true.prop.type", seq(length(type.prop))),
+                    rmse.name, bias.names)
 # bind tables
-rownames(results.old) <- rownames(analysis.matrix) <- "NA"
-results.new <- cbind(results.old, analysis.matrix)
+rownames(results.old) <- rownames(mres) <- "NA"
+results.new <- cbind(results.old, mres)
 
 # save new results
 ts <- as.character(as.numeric(Sys.time()))

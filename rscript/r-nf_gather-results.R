@@ -26,7 +26,19 @@ dfres <- do.call(rbind, lapply(lfv.filt, function(fni){
 # append rmse by type
 #--------------------
 res.colnames <- colnames(dfres)
-unique.types <- unique(res.colnames[])
+if("typelabels" %in% colnames(dfres)){
+  unique.types <- unique(dfres[,"typelabels"])
+  df.rmse <- do.call(cbind, lapply(unique.types, function(typei){
+    cname.str <- paste0("pred.", typei)
+    pred.prop <- dfres[,grepl(cname.str, res.colnames)]
+    cname.str <- paste0("true.", typei)
+    true.prop <- dfres[,grepl(cname.str, res.colnames)]
+    rmsei <- sqrt(mean((pred.prop-true.prop)^2))
+    rep(rmsei, nrow(dfres))
+  }))
+} else{
+  message("Didn't find any columns called 'typelabels.' Skipping within-type RMSEs...")
+}
 
 #-------------
 # save results
