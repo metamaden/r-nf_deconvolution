@@ -6,7 +6,6 @@
 #
 #
 
-
 libv <- c("argparse")
 sapply(libv, library, character.only = T)
 
@@ -15,7 +14,7 @@ sapply(libv, library, character.only = T)
 #-------------
 # loaded results params
 colname.type.labels <- "type.labels"
-filt.str.prop.pred <- "^prop.pred.type.*"
+filt.str.prop.pred <- "^prop.pred."
 
 # new results params
 bias.cname.str <- "bias.type"
@@ -54,13 +53,14 @@ parser$add_argument("-t", "--true_proportions", type="character",
 # get parser object
 args <- parser$parse_args()
 
-#-----------------
+#----------
 # load data
-#-----------------
+#----------
 # load results
 results.old.fpath <- args$results_data
 results.old <- read.csv(results.old.fpath)
 results.old <- results.old[,3:ncol(results.old)]
+
 # get true proportions
 true.prop.fname <- args$true_proportions
 true.prop <- get(load(true.prop.fname))
@@ -69,10 +69,11 @@ true.prop <- get(load(true.prop.fname))
 # parse true proportions
 #-----------------------
 # check for type.labels column
-if(!colname.type.labels %in% colnames(results.old)){
+if(colname.type.labels %in% colnames(results.old)){
+  type.labels <- unlist(strsplit(results.old[,colname.type.labels], ";"))
+} else{
   stop("Error, no column called '",colname.type.labels,"' in loaded results.")
 }
-type.labels <- unlist(strsplit(results.old[,colname.type.labels], ";"))
 
 # check label overlap
 true.prop.labels <- names(true.prop)
@@ -81,7 +82,7 @@ if(length(true.prop.labels)==0){
   stop("Error, no overlap of type labels in true proportions data.")}
 
 # check for duplicated labels
-if(length(duplicated(true.prop.labels)) > 0){
+if(length(which(duplicated(true.prop.labels))) > 0){
   stop("Error, duplicated type labels in true proportions.")
 }
 
@@ -93,6 +94,8 @@ true.prop <- true.prop[label.order]
 filt.pred <- grepl(filt.str.prop.pred, colnames(results.old))
 pred.prop.matrix <- results.old[,filt.pred]
 pred.prop <- as.numeric(pred.prop.matrix[1,])
+names(pred.prop) <- gsub(filt.str.prop.pred, "", 
+                         colnames(pred.prop.matrix))
 
 #-----------------
 # perform analyses
@@ -108,8 +111,8 @@ rmse.types <- rmse_types(true.prop, pred.prop)
 #---------------
 # get results matrix
 mres <- matrix(c(true.prop, rmse.types, bias.vector), nrow = 1)
-colnames(mres) <- c(paste0(cname.prop.true.str, seq(length(type.prop))),
-                    rmse.types.cname.str, bias.names)
+cnames.true.prop <- paste0(cname.prop.true.str, seq(length(true.prop)))
+colnames(mres) <- c(cnames.true.prop, rmse.types.cname.str, bias.names)
 # bind tables
 rownames(results.old) <- rownames(mres) <- "NA"
 results.new <- cbind(results.old, mres)

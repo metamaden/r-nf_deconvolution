@@ -13,13 +13,17 @@ cname.type.labels <- "type.labels"
 filt.str.pred.prop <- "^pred\\.prop\\..*"
 filt.str.pred.prop <- "^pred\\.prop\\..*"
 
+# filenames
+fname.str <- 'deconvolution_analysis_.*'
+
+# publish directory path
+publish.dir <- "results"
+
 #----------------
 # parse filenames
 #----------------
-filt.str <- 'deconvolution_analysis.*'
-results.dir <- "results"
-lfv <- list.files(results.dir)
-lfv.filt <- lfv[grepl(filt.str, lfv)]
+lfv <- list.files(publish.dir)
+lfv.filt <- lfv[grepl(fname.str, lfv)]
 
 #-------------------
 # load and bind data
