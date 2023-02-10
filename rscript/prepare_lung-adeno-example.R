@@ -84,21 +84,17 @@ newline <- c(file.path("$lunchDir", dest.dir),  # sce path
 # update object paths
 for(scei in sce.names){
   linei <- newline
-  linei[1] <- file.path(linei[1], scei)
+  linei[1] <- file.path(linei[1], 
+                        paste0(scei, ".rda"))
   linei[2] <- file.path(linei[2], 
                         paste0(true.prop.fname.stem, 
                                scei, ".rda"))
+  linei[1] <- paste0('"', linei[1], '"')
+  linei[2] <- paste0('"', linei[2], '"')
+  dfnew <- rbind(dfnew, linei)
 }
+colnames(dfnew) <- c("sce_filepath", "true_proportions_path", 
+                     "decon_method", "decon_args", "run_info", "assay_name")
 
 # save
-write.csv(dfnew, file = workflow.table.fname)
-
-
-
-
-
-
-
-
-
-
+write.csv(dfnew, file = workflow.table.fname, row.names = FALSE)
