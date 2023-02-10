@@ -4,6 +4,8 @@
 *nextflow.log*
 *.nextflow
 work
+results
+results_table*
 
 #-------------
 # R .gitignore
