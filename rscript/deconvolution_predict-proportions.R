@@ -161,9 +161,10 @@ results.vector["sce_filepath"] <- sce.filepath
 results.vector["deconvolution_method"] <- tolower(deconvolution.method)
 results.vector["method_arguments"] <- method.args
 results.vector["assay_name"] <- assay.name
+results.vector[["type_labels"]] <- paste0(unique.celltypes, collapse = ";")
 
 # append proportions
-names(pred.proportions) <- paste0("type", seq(length(pred.proportions)))
+names(pred.proportions) <- paste0("prop.pred.type", seq(length(pred.proportions)))
 results.vector <- c(results.vector, pred.proportions)
 
 # append time, timestamp

@@ -38,9 +38,9 @@ parser$add_argument("-t", "--true_proportions", type="character",
 # get parser object
 args <- parser$parse_args()
 
-#-------------
-# get analyses
-#-------------
+#-----------------
+# load data
+#-----------------
 # load results
 results.old.fpath <- args$results_data
 results.old <- read.csv(results.old.fpath)
@@ -48,12 +48,18 @@ results.old <- results.old[,3:ncol(results.old)]
 # get true proportions
 true.prop.fname <- args$true_proportions
 true.prop <- get(load(true.prop.fname))
+
+#-----------------------
+# parse true proportions
+#-----------------------
 true.prop <- as.numeric(true.prop)
 # get predicted proportions
 pred.prop.matrix <- results.old[,grepl("^type.*", colnames(results.old))]
 pred.prop <- as.numeric(pred.prop.matrix[1,])
 
-# do analyses
+#-----------------
+# perform analyses
+#-----------------
 # get biases
 bias.vector <- bias(true.prop, pred.prop)
 bias.names <- paste0("bias_type", seq(length(bias.vector)))
@@ -66,7 +72,7 @@ rmse.name <- "rmse_types"
 #---------------
 # get results matrix
 mres <- matrix(c(true.prop, rmse.types, bias.vector), nrow = 1)
-colnames(mres) <- c(paste0("true.prop.type", seq(length(type.prop))),
+colnames(mres) <- c(paste0("prop.pred.type", seq(length(type.prop))),
                     rmse.name, bias.names)
 # bind tables
 rownames(results.old) <- rownames(mres) <- "NA"
