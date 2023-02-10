@@ -29,7 +29,7 @@ lfv.filt <- lfv[grepl(fname.str, lfv)]
 # load and bind data
 #-------------------
 dfres <- do.call(rbind, lapply(lfv.filt, function(fni){
-  dfi <- read.csv(file.path(results.dir, fni))
+  dfi <- read.csv(file.path(publish.dir, fni))
   dfi[,2:ncol(dfi)]
 }))
 
