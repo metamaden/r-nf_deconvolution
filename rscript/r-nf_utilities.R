@@ -48,7 +48,7 @@ save_sce_data <- function(sce.names, celltypevariable = "celltype",
   return(TRUE)
 }
 
-new_workflow_table <- function(sce.names, data.dir = "data",
+new_workflow_table <- function(sce.names = NULL, data.dir = "data",
                                true.prop.fname.stem = "true_proportions_",
                                colnames = c("sce_filepath", 
                                             "true_proportions_path", 
@@ -60,7 +60,7 @@ new_workflow_table <- function(sce.names, data.dir = "data",
   #
   # Begins a new workflow table.
   # 
-  # sce.names : Vector of sce/se filenames.
+  # sce.names : Vector of sce/se filenames. If left NULL, writes an example table.
   # data.dir : Name of folder containing sce data objects.
   # true.prop.fname.stem : Beginning filename stem of true proportions data objects.
   # colnames : Column names of the workflow table.
@@ -88,16 +88,30 @@ new_workflow_table <- function(sce.names, data.dir = "data",
                "counts")                          # assay name
   
   # update object paths
+  if(is(sce.names, "NULL")){
+    message("Writing example table...")
+    sce.names <- "[SCE_FILENAME_HERE]"
+  }
   for(scei in sce.names){
+    message("Working on sce object ", scei, "...")
     linei <- newline
-    linei[1] <- file.path(linei[1], 
-                          paste0(scei, ".rda"))
-    linei[2] <- file.path(linei[2], 
-                          paste0(true.prop.fname.stem, 
-                                 scei, ".rda"))
-    linei[1] <- paste0('"', linei[1], '"')
-    linei[2] <- paste0('"', linei[2], '"')
-    dfnew <- rbind(dfnew, linei)
+    # check data files
+    sce.fpath <- file.path(data.dir, paste0(scei, ".rda"))
+    sce.exists <- file.exists(sce.fpath)
+    tp.fpath <- paste0(true.prop.fname.stem, scei, ".rda")
+    tp.exists <- file.exists(file.path(data.dir, tp.fpath))
+    if(!sce.exists){
+      message("Didn't find file ",sce.fpath,". Skipping data write.")
+    } else if(!tp.exists){
+      message("Didn't find file ",tp.fpath,". Skipping data write.")
+    } else{
+      linei[1] <- file.path(linei[1], paste0(scei, ".rda"))
+      linei[2] <- file.path(linei[2], 
+                            paste0(true.prop.fname.stem, scei, ".rda"))
+      linei[1] <- paste0('"', linei[1], '"')
+      linei[2] <- paste0('"', linei[2], '"')
+      dfnew <- rbind(dfnew, linei)
+    }
   }
   colnames(dfnew) <- colnames
   
