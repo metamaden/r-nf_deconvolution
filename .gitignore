@@ -49,3 +49,4 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+data/sincell_with_class.RData
