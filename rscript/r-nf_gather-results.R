@@ -6,6 +6,13 @@
 #
 #
 
+#--------------
+# manage params
+#--------------
+cname.type.labels <- "type.labels"
+filt.str.pred.prop <- "^pred\\.prop\\..*"
+filt.str.pred.prop <- "^pred\\.prop\\..*"
+
 #----------------
 # parse filenames
 #----------------
@@ -26,18 +33,18 @@ dfres <- do.call(rbind, lapply(lfv.filt, function(fni){
 # append rmse by type
 #--------------------
 res.colnames <- colnames(dfres)
-if("typelabels" %in% colnames(dfres)){
-  unique.types <- unique(dfres[,"typelabels"])
+if(cname.type.labels %in% colnames(dfres)){
+  unique.types <- unique(dfres[,cname.type.labels])
   df.rmse <- do.call(cbind, lapply(unique.types, function(typei){
-    cname.str <- paste0("pred.", typei)
+    cname.str <- paste0(filt.str.pred.prop, typei)
     pred.prop <- dfres[,grepl(cname.str, res.colnames)]
-    cname.str <- paste0("true.", typei)
+    cname.str <- paste0(filt.str.true.prop, typei)
     true.prop <- dfres[,grepl(cname.str, res.colnames)]
     rmsei <- sqrt(mean((pred.prop-true.prop)^2))
     rep(rmsei, nrow(dfres))
   }))
 } else{
-  message("Didn't find any columns called 'typelabels.' Skipping within-type RMSEs...")
+  message("Didn't find any columns called 'type.labels' Skipping within-type RMSEs...")
 }
 
 #-------------
