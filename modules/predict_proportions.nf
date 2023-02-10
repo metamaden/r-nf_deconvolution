@@ -12,11 +12,12 @@ process predict_proportions {
         val sce_filepath
         val deconvolution_method
         val assay_name
+        val celltype_variable
     output:
         path("deconvolution_results_*")
 
     script:
     """
-    Rscript $params.predict_proportions_script -r $sce_filepath -d $deconvolution_method -a $assay_name
+    Rscript $params.predict_proportions_script -r $sce_filepath -d $deconvolution_method -a $assay_name -c $celltype_variable
     """
 }

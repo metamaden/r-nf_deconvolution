@@ -54,7 +54,7 @@ ls()
 #----------------------
 data.save.status <- try(save_sce_data(sce.names, 
                                       celltypevariable = "celltype",
-                                      data.dir = "data", overwrite = TRUE))
+                                      data.dir = "data", overwrite = FALSE))
 
 if(is(data.save.status, "logical") & data.save.status==TRUE){
   message("Data save success.")
@@ -66,4 +66,5 @@ if(is(data.save.status, "logical") & data.save.status==TRUE){
 # begin new workflow_table.csv
 #-----------------------------
 new_workflow_table(sce.names, data.dir = dest.dir, 
-                   true.prop.fname.stem = true.prop.fname.stem)
+                   true.prop.fname.stem = true.prop.fname.stem,
+                   celltype.variable = true.label.variable)

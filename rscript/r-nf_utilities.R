@@ -50,10 +50,12 @@ save_sce_data <- function(sce.names, celltypevariable = "celltype",
 
 new_workflow_table <- function(sce.names = NULL, data.dir = "data",
                                true.prop.fname.stem = "true_proportions_",
+                               celltype.variable = "celltype",
                                colnames = c("sce_filepath", 
                                             "true_proportions_path", 
                                             "decon_method", "decon_args", 
-                                            "run_info", "assay_name"),
+                                            "run_info", "assay_name", 
+                                            "celltype_variable"),
                                table.dir = ".", table.fname = "workflow_table.csv",
                                overwrite = TRUE){
   # new_workflow_table
@@ -63,6 +65,7 @@ new_workflow_table <- function(sce.names = NULL, data.dir = "data",
   # sce.names : Vector of sce/se filenames. If left NULL, writes an example table.
   # data.dir : Name of folder containing sce data objects.
   # true.prop.fname.stem : Beginning filename stem of true proportions data objects.
+  # celltype.variable : Name of celltype variable in sce colData.
   # colnames : Column names of the workflow table.
   # table.fname : Filename of new workflow table to write.
   # overwrite : Whether to overwrite an existing workflow table.
@@ -77,7 +80,7 @@ new_workflow_table <- function(sce.names = NULL, data.dir = "data",
   }
   
   # start new table
-  dfnew <- matrix(nrow = 0, ncol = 6)
+  dfnew <- matrix(nrow = 0, ncol = length(colnames))
   
   # get template row
   newline <- c(file.path("$lunchDir", data.dir),  # sce path
@@ -85,12 +88,14 @@ new_workflow_table <- function(sce.names = NULL, data.dir = "data",
                "nnls",                            # deconvolution method
                "NA",                              # additional arguments
                "lung_adeno_first_benchmark",      # run label
-               "counts")                          # assay name
+               "counts",                          # assay name
+               celltype.variable)                 # celltype variable name
   
   # update object paths
   if(is(sce.names, "NULL")){
     message("Writing example table...")
     sce.names <- "[SCE_FILENAME_HERE]"
+    check.files <- FALSE
   }
   for(scei in sce.names){
     message("Working on sce object ", scei, "...")
@@ -100,18 +105,21 @@ new_workflow_table <- function(sce.names = NULL, data.dir = "data",
     sce.exists <- file.exists(sce.fpath)
     tp.fpath <- paste0(true.prop.fname.stem, scei, ".rda")
     tp.exists <- file.exists(file.path(data.dir, tp.fpath))
-    if(!sce.exists){
-      message("Didn't find file ",sce.fpath,". Skipping data write.")
-    } else if(!tp.exists){
-      message("Didn't find file ",tp.fpath,". Skipping data write.")
-    } else{
-      linei[1] <- file.path(linei[1], paste0(scei, ".rda"))
-      linei[2] <- file.path(linei[2], 
-                            paste0(true.prop.fname.stem, scei, ".rda"))
-      linei[1] <- paste0('"', linei[1], '"')
-      linei[2] <- paste0('"', linei[2], '"')
-      dfnew <- rbind(dfnew, linei)
+    if(check.files){
+      if(!sce.exists){
+        message("Didn't find file ",sce.fpath,". Skipping data write.")
+      } else if(!tp.exists){
+        message("Didn't find file ",tp.fpath,". Skipping data write.")
+      } else{
+        
+      }
     }
+    linei[1] <- file.path(linei[1], paste0(scei, ".rda"))
+    linei[2] <- file.path(linei[2], 
+                          paste0(true.prop.fname.stem, scei, ".rda"))
+    linei[1] <- paste0('"', linei[1], '"')
+    linei[2] <- paste0('"', linei[2], '"')
+    dfnew <- rbind(dfnew, linei)
   }
   colnames(dfnew) <- colnames
   
