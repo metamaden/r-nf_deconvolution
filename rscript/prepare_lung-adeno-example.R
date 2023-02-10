@@ -6,8 +6,29 @@
 # (Tian et al 2019).
 #
 
+#-------------
 # manage paths
+#-------------
 download.script.fpath <- "./rscript/download_lung-adeno-sce.R"
+dest.dir <- "data"
+sce.rdata <- "sincell_with_class.RData"
+destpath <- paste0("./",dest.dir,"/", sce.rdata)
 
+#--------------------
+# parse data download
+#--------------------
 # download example data
-source(download.script.fpath)
+data.status <- source(download.script.fpath)
+
+#----------
+# load data
+#----------
+if(is(data.status, "try-error")){
+  stop("Error, couldn't load data. Check destination folder at ", dest.dir,".")
+} else{
+  load(destpath)
+}
+
+#----------------------
+# save true proportions
+#----------------------

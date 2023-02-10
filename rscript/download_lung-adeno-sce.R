@@ -9,12 +9,16 @@
 dest.dir <- "data"
 sce.rdata <- "sincell_with_class.RData"
 destpath <- paste0("./",dest.dir,"/", sce.rdata)
-http <- "https://github.com/metamaden/sc_mixology/tree/master/data/"
+http <- "https://github.com/metamaden/sc_mixology/raw/master/data/"
 download.fpath <- paste0(http, sce.rdata)
 
 # check existing data
 if(file.exists(destpath)){
   message("Found existing data .RData file -- skipping download.")
 } else{
-  download.file(url = download.fpath, destfile = destpath)
+  download.file(url = download.fpath, destfile = destpath, mode = "wb")
 }
+
+# try load
+try.load <- try(load(destpath))
+return(try.load)
