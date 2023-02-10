@@ -50,3 +50,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 data/sincell_with_class.RData
+data/true_proportions_sce_sc_Dropseq_qc.rda
+data/true_proportions_sce_sc_CELseq2_qc.rda
+data/true_proportions_sce_sc_10x_qc.rda
+data/sce_sc_Dropseq_qc.rda
+data/sce_sc_CELseq2_qc.rda
+data/sce_sc_10x_qc.rda
