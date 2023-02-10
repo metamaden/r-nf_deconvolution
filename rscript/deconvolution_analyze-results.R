@@ -10,6 +10,22 @@
 libv <- c("argparse")
 sapply(libv, library, character.only = T)
 
+#-------------
+# parse params
+#-------------
+# loaded results params
+colname.type.labels <- "type.labels"
+filt.str.prop.pred <- "^prop.pred.type.*"
+
+# new results params
+bias.cname.str <- "bias.type"
+rmse.types.cname.str <- "rmse.types"
+cname.prop.true.str <- "prop.true.type"
+
+# return file params
+fname.stem <- "deconvolution_analysis_"
+fname.ext <- ".csv"
+
 #-----------------
 # helper functions
 #-----------------
@@ -52,9 +68,30 @@ true.prop <- get(load(true.prop.fname))
 #-----------------------
 # parse true proportions
 #-----------------------
-true.prop <- as.numeric(true.prop)
+# check for type.labels column
+if(!colname.type.labels %in% colnames(results.old)){
+  stop("Error, no column called '",colname.type.labels,"' in loaded results.")
+}
+type.labels <- unlist(strsplit(results.old[,colname.type.labels], ";"))
+
+# check label overlap
+true.prop.labels <- names(true.prop)
+true.prop.labels <- true.prop.labels[true.prop.labels %in% type.labels]
+if(length(true.prop.labels)==0){
+  stop("Error, no overlap of type labels in true proportions data.")}
+
+# check for duplicated labels
+if(length(duplicated(true.prop.labels)) > 0){
+  stop("Error, duplicated type labels in true proportions.")
+}
+
+# match order
+label.order <- order(match(true.prop.labels, type.labels))
+true.prop <- true.prop[label.order]
+
 # get predicted proportions
-pred.prop.matrix <- results.old[,grepl("^type.*", colnames(results.old))]
+filt.pred <- grepl(filt.str.prop.pred, colnames(results.old))
+pred.prop.matrix <- results.old[,filt.pred]
 pred.prop <- as.numeric(pred.prop.matrix[1,])
 
 #-----------------
@@ -62,23 +99,22 @@ pred.prop <- as.numeric(pred.prop.matrix[1,])
 #-----------------
 # get biases
 bias.vector <- bias(true.prop, pred.prop)
-bias.names <- paste0("bias_type", seq(length(bias.vector)))
+bias.names <- paste0(bias.cname.str, seq(length(bias.vector)))
 # get rmse across cell types
 rmse.types <- rmse_types(true.prop, pred.prop)
-rmse.name <- "rmse_types"
 
 #---------------
 # return results
 #---------------
 # get results matrix
 mres <- matrix(c(true.prop, rmse.types, bias.vector), nrow = 1)
-colnames(mres) <- c(paste0("prop.pred.type", seq(length(type.prop))),
-                    rmse.name, bias.names)
+colnames(mres) <- c(paste0(cname.prop.true.str, seq(length(type.prop))),
+                    rmse.types.cname.str, bias.names)
 # bind tables
 rownames(results.old) <- rownames(mres) <- "NA"
 results.new <- cbind(results.old, mres)
 
 # save new results
 ts <- as.character(as.numeric(Sys.time()))
-fname <- paste0("deconvolution_analysis_", ts, ".csv")
+fname <- paste0(fname.stem, ts, fname.ext)
 write.csv(results.new, file = fname)
