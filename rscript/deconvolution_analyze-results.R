@@ -25,18 +25,15 @@ cname.prop.true.str <- "prop.true.type"
 fname.stem <- "deconvolution_analysis_"
 fname.ext <- ".csv"
 
-#-----------------
-# helper functions
-#-----------------
-bias <- function(true.proportions, pred.proportions){
-  true.proportions - pred.proportions
-}
+# rscript paths
+rscript.dir <- "rscript"
+decon.utils.scriptfname = "deconvolution_utilities.R"
+decon.utils.rscriptpath <- file.path(rscript.dir, decon.utils.scriptfname)
 
-rmse_types <- function(true.proportions, pred.proportions){
- error <- bias(true.proportions, pred.proportions)
- rmse <- sqrt(mean(error)^2)
- return(rmse)
-}
+#-----------------
+# source utilities
+#-----------------
+source(decon.utils.rscriptpath)
 
 #--------------
 # manage parser
