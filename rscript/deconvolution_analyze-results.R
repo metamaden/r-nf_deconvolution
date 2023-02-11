@@ -59,7 +59,7 @@ args <- parser$parse_args()
 # load results
 results.old.fpath <- args$results_data
 results.old <- read.csv(results.old.fpath)
-results.old <- results.old[,3:ncol(results.old)]
+# results.old <- results.old[,3:ncol(results.old)]
 
 # get true proportions
 true.prop.fname <- args$true_proportions

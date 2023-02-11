@@ -17,10 +17,11 @@ workflow {
     sce = channel.fromList( params.sce_filepath )
     method = channel.fromList( params.decon_method )
     assay = channel.fromList( params.assay_name )
+    typevar = channel.fromList( params.celltype_variable ) // name of celltype variable
     true_proportions_path = channel.fromList( params.true_proportions_path )
     
     // run workflow
-    predict_prop( sce, method, assay )
+    predict_prop( sce, method, assay, typevar )
     predict_prop.out.view()
     analyze_res( predict_prop.out, true_proportions_path )
 }

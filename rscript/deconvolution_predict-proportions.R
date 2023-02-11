@@ -161,8 +161,8 @@ results.vector["sce_filepath"] <- sce.filepath
 results.vector["deconvolution_method"] <- tolower(deconvolution.method)
 results.vector["method_arguments"] <- method.args
 results.vector["assay_name"] <- assay.name
-results.vector[["type_labels"]] <- paste0(unique.celltypes, collapse = ";")
-results.vector[["celltype_variable"]] <- celltype.variable
+results.vector["type_labels"] <- paste0(unique.celltypes, collapse = ";")
+results.vector["celltype_variable"] <- celltype.variable
 
 # append proportions
 names(pred.proportions) <- paste0("prop.pred.type", 
