@@ -83,7 +83,7 @@ new_workflow_table <- function(sce.names = NULL, data.dir = "data",
   dfnew <- matrix(nrow = 0, ncol = length(colnames))
   
   # get template row
-  newline <- c(file.path("$lunchDir", data.dir),  # sce path
+  newline <- c(file.path("$launchDir", data.dir),  # sce path
                file.path("$launchDir", data.dir), # true proportions path
                "nnls",                            # deconvolution method
                "NA",                              # additional arguments
@@ -92,6 +92,7 @@ new_workflow_table <- function(sce.names = NULL, data.dir = "data",
                celltype.variable)                 # celltype variable name
   
   # update object paths
+  check.files <- TRUE
   if(is(sce.names, "NULL")){
     message("Writing example table...")
     sce.names <- "[SCE_FILENAME_HERE]"

@@ -95,7 +95,7 @@ args <- parser$parse_args()
 sce.filepath <- args$sce_filepath
 bulk.filepath <- args$bulkse
 deconvolution.method <- args$deconvolution_method
-time.run <- args$time_run
+# time.run <- args$time_run
 assay.name <- args$assay_name
 celltype.variable <- args$celltype_variable
 method.args <- args$method_args
@@ -131,11 +131,11 @@ if(assay.name %in% names(assays(sce))){
 }
 
 # get bulk data
-if(file.exists(bulk.filepath)){
-  Y <- get(load(bulk.filepath))
-} else if(bulk.filepath == "NA"){
+if(bulk.filepath == "NA"|is.na(bulk.filepath)){
   message("Making pseudobulk from reference data...")
   Y <- matrix(rowMeans(mexpr), ncol = 1)
+} else if(file.exists(bulk.filepath)){
+  Y <- get(load(bulk.filepath))
 } else{
   stop("Error, couldn't get bulk data.")
 }
@@ -161,10 +161,12 @@ results.vector["sce_filepath"] <- sce.filepath
 results.vector["deconvolution_method"] <- tolower(deconvolution.method)
 results.vector["method_arguments"] <- method.args
 results.vector["assay_name"] <- assay.name
-results.vector[["type.labels"]] <- paste0(unique.celltypes, collapse = ";")
+results.vector[["type_labels"]] <- paste0(unique.celltypes, collapse = ";")
+results.vector[["celltype_variable"]] <- celltype.variable
 
 # append proportions
-names(pred.proportions) <- paste0("prop.pred.type", seq(length(pred.proportions)))
+names(pred.proportions) <- paste0("prop.pred.type", 
+                                  seq(length(pred.proportions)))
 results.vector <- c(results.vector, pred.proportions)
 
 # append time, timestamp
@@ -176,5 +178,5 @@ results.table <- t(as.data.frame(results.vector, nrow = 1))
 # save new results
 ts <- as.character(as.numeric(t1))
 new.filename <- paste0("deconvolution_results_", as.numeric(t1), ".csv")
-write.csv(results.table, file = new.filename)
+write.csv(results.table, file = new.filename, row.names = FALSE)
 

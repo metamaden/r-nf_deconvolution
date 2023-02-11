@@ -9,7 +9,7 @@
 #--------------
 # manage params
 #--------------
-cname.type.labels <- "type.labels"
+type.labels.cname <- "type_labels"
 filt.str.pred <- "^prop\\.pred\\."
 filt.str.true <- "^prop\\.true\\."
 
@@ -37,7 +37,7 @@ dfres <- do.call(rbind, lapply(lfv.filt, function(fni){
 # append rmse by type
 #--------------------
 res.colnames <- colnames(dfres)
-if(cname.type.labels %in% colnames(dfres)){
+if(type.labels.cname %in% colnames(dfres)){
   message("Getting RMSE within types...")
   cnvf <- colnames(dfres)
   cnvf <- cnvf[grepl(filt.str.pred, cnvf)]
@@ -55,7 +55,7 @@ if(cname.type.labels %in% colnames(dfres)){
   colnames(df.rmse) <- paste0("rmse.", unique.types)
   dfres <- cbind(dfres, df.rmse)
 } else{
-  message("Didn't find any columns called 'type.labels'. ",
+  message("Didn't find any columns called '",type.labels.cname,"'. ",
           "Skipping within-type RMSEs...")
 }
 

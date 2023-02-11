@@ -13,7 +13,7 @@ sapply(libv, library, character.only = T)
 # parse params
 #-------------
 # loaded results params
-colname.type.labels <- "type.labels"
+colname.type.labels <- "type_labels"
 filt.str.prop.pred <- "^prop.pred."
 
 # new results params
@@ -120,4 +120,4 @@ results.new <- cbind(results.old, mres)
 # save new results
 ts <- as.character(as.numeric(Sys.time()))
 fname <- paste0(fname.stem, ts, fname.ext)
-write.csv(results.new, file = fname)
+write.csv(results.new, file = fname, row.names = FALSE)
