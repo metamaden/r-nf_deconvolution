@@ -24,7 +24,7 @@ sapply(libv, library, character.only = T)
 # helper functions
 #------------------
 predict_proportions <- function(Z, Y, strict.method = "nnls", 
-                                method.args = "", verbose = FALSE){
+                                method.args = "", verbose = FALSE, ...){
   # predict_proportions
   #
   # Z : signature matrix
@@ -33,7 +33,7 @@ predict_proportions <- function(Z, Y, strict.method = "nnls",
   # method.args : additional method arguments
   # verbose : whether to show verbose messages
   #
-  if(verbose){message("getting cell type proportion predictions...")}
+  if(verbose){message("Getting cell type proportion predictions...")}
   
   # format string arguments
   cond <- method.args %in% c("", "NA")|is.na(method.args)
@@ -46,16 +46,16 @@ predict_proportions <- function(Z, Y, strict.method = "nnls",
   
   # parse methods
   if(method == "nnls"){
-    if(verbose){message("using method nnls...")}
+    if(verbose){message("Using method nnls...")}
     command.string <- paste0("nnls::nnls(Z, Y",method.args,")$x")
   } else if(method == "music"){
-    if(verbose){message("using method MuSiC...")}
+    if(verbose){message("Using method MuSiC...")}
     if(method.args == ""){
-      if(verbose){message("getting mean library sizes by type...")}
+      if(verbose){message("Getting mean library sizes by type...")}
       S <- unlist(lapply(unique.celltypes, function(ci){
         mean(colSums(mexpr[,cd[,celltype.variable]==ci]))
       }))
-      if(verbose){message("setting variances by gene...")}
+      if(verbose){message("Setting variances by gene...")}
       Sigma <- matrix(0, ncol = 1, nrow = nrow(Z))
       method.args <- ",S = S, Sigma = Sigma, nu = 1e-10, iter.max = 100, eps = 0"
     }
@@ -66,7 +66,7 @@ predict_proportions <- function(Z, Y, strict.method = "nnls",
   
   # get proportion predictions
   p <- eval(parse(text = command.string))
-  if(verbose){message("completed proportion predictions.")}
+  if(verbose){message("Completed proportion predictions.")}
   return(p)
 }
 
@@ -157,9 +157,18 @@ if(bulk.filepath == "NA"|is.na(bulk.filepath)){
 # run deconvolution
 #------------------
 t1 <- Sys.time()
-pred.proportions <- predict_proportions(Z = Z, Y = Y, 
-                                        strict.method = deconvolution.method,
-                                        method.args = method.args)
+if(deconvolution.method=='music'){
+  unique.celltypes <- unique(sce[[celltype.variable]])
+  pred.proportions <- predict_proportions(Z = Z, Y = Y, 
+                                          strict.method = deconvolution.method,
+                                          method.args = method.args,
+                                          unique.celltypes = unique.celltypes)
+} else{
+  pred.proportions <- predict_proportions(Z = Z, Y = Y, 
+                                          strict.method = deconvolution.method,
+                                          method.args = method.args)
+}
+
 time.run <- Sys.time() - t1
 time.run <- as.numeric(time.run)
 names(time.run) <- "time.run.sec"

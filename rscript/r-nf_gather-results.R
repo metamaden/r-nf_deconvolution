@@ -19,6 +19,8 @@ fname.str <- 'deconvolution_analysis_.*'
 # publish directory path
 publish.dir <- "results"
 
+method.cname <- "deconvolution_method"
+
 #----------------
 # parse filenames
 #----------------
@@ -56,7 +58,32 @@ if(type.labels.cname %in% colnames(dfres)){
   dfres <- cbind(dfres, df.rmse)
 } else{
   message("Didn't find any columns called '",type.labels.cname,"'. ",
-          "Skipping within-type RMSEs...")
+          "Skipping within-type RMSE calculation...")
+}
+
+#----------------------
+# append rmse by method
+#----------------------
+if(method.cname %in% colnames(dfres)){
+  message("Getting RMSE by method...")
+  cnvf <- colnames(dfres)
+  cnvf <- cnvf[grepl(method.cname, cnvf)]
+  unique.methods <- unique(dfres[,cnvf])
+  df.rmse.method <- do.call(cbind, lapply(unique.methods, function(methodi){
+    method.filt <- dfres[,method.cname]==methodi
+    dff <- dfres[method.filt,]
+    truev <- unlist(dff[,grepl(filt.str.true, colnames(dff))])
+    predv <- unlist(dff[,grepl(filt.str.pred, colnames(dff))])
+    truev <- as.numeric(truev)
+    predv <- as.numeric(predv)
+    rmsei <- sqrt(mean((predv-truev)^2))
+    rep(rmsei, nrow(dfres))
+  }))
+  colnames(df.rmse.method) <- paste0("rmse.", unique.methods)
+  dfres <- cbind(dfres, df.rmse.method)
+} else{
+  message("Didn't find any columns called '",method.cname,"'. ",
+          "Skipping within-method RMSE calculation...")
 }
 
 #-------------
