@@ -26,14 +26,28 @@ fname.stem <- "deconvolution_analysis_"
 fname.ext <- ".csv"
 
 # rscript paths
-rscript.dir <- "rscript"
-decon.utils.scriptfname = "deconvolution_utilities.R"
-decon.utils.rscriptpath <- file.path(rscript.dir, decon.utils.scriptfname)
+# rscript.dir <- "$launchDir/rscript"
+# decon.utils.scriptfname = "deconvolution_utilities.R"
+# decon.utils.rscriptpath <- file.path(rscript.dir, decon.utils.scriptfname)
 
 #-----------------
 # source utilities
 #-----------------
-source(decon.utils.rscriptpath)
+# source(decon.utils.rscriptpath)
+
+#-----------------
+# helper functions
+#-----------------
+
+bias <- function(true.proportions, pred.proportions){
+  true.proportions - pred.proportions
+}
+
+rmse_types <- function(true.proportions, pred.proportions){
+  error <- bias(true.proportions, pred.proportions)
+  rmse <- sqrt(mean(error)^2)
+  return(rmse)
+}
 
 #--------------
 # manage parser
