@@ -6,7 +6,7 @@
 #
 
 # params
-newenv_name=nextflowr_deconvolution
+newenv_name=r-nf_deconvolution
 
 # make new env
 conda create --name $newenv_name r=4.2.0
