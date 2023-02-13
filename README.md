@@ -4,16 +4,16 @@ Nextflow workflow for deconvolution method development and benchmarking.
 
 # Setup
 
-From the top level of `nextflowr-deconvolution`, run the following:
+From the top level of `r-nf_deconvolution`, run the following:
 
 ```
-conda env create -f ./yml/nextflowr-deconvolution.yml
+conda env create -f ./yml/r-nf_deconvolution.yml
 ```
 
 Activate the new environment with:
 
 ```
-conda activate nextflowr-deconvolution
+conda activate r-nf_deconvolution
 ```
 
 You should now be ready to run `nextflowr-deconvolution` (continue reading).
@@ -23,7 +23,7 @@ You should now be ready to run `nextflowr-deconvolution` (continue reading).
 Use a terminal to navigate to the top level of `nextflowr-deconvolution` and run the following:
 
 ```
-sh ./sh/nextflowr.sh
+sh ./sh/r-nf.sh
 ```
 
 This should use example data to produce a series of outputs. The main outputs are stored at the top level in a .csv file called `results_table_*.csv`.
