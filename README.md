@@ -2,6 +2,10 @@
 
 Nextflow workflow for deconvolution method development and benchmarking.
 
+Author: Sean Maden
+
+Acknowledgements: Hédia Tnani, Nick Eagles
+
 # Setup
 
 ## Virtual environment and dependencies
